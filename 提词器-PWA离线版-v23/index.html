@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta id="themeColorMeta" name="theme-color" content="#070908" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="金先生的提词板" />
+    <title>金先生的提词板</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="tree-avatar.jpg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="editorView" class="view editor-view" aria-label="编辑提词稿">
+        <header class="editor-header">
+          <div>
+            <input id="brandTitle" class="brand-title" type="text" value="金先生的提词板" maxlength="40" aria-label="提词器标题，可自由编辑" title="点击编辑标题" />
+          </div>
+          <div class="header-note-wrap">
+            <div class="signature-note">
+              <button id="loveButton" class="signature-avatar-button" type="button" aria-label="点击头像发送爱心" title="点我试试看">
+                <img class="signature-avatar" src="tree-avatar.jpg" alt="白色树木头像" />
+              </button>
+              <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换到亮色模式" title="切换到亮色模式">
+                <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+                <svg class="moon-icon is-hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4 8.5 8.5 0 1 0 20 15.2Z"/></svg>
+              </button>
+            </div>
+            <p id="saveStatus" class="save-status">已自动保存</p>
+          </div>
+        </header>
+
+        <div class="format-toolbar" role="toolbar" aria-label="文字显示设置">
+          <label class="field-control">
+            <span>字体</span>
+            <select id="fontFamily" aria-label="字体">
+              <option value="system">系统默认</option>
+              <option value="sans">黑体</option>
+              <option value="serif">宋体</option>
+              <option value="kai">楷体</option>
+              <option value="mono">等宽字体</option>
+            </select>
+          </label>
+          <label class="field-control compact-field">
+            <span>字号</span>
+            <input id="fontSize" type="number" min="16" max="240" step="2" value="64" aria-label="字号，单位为像素" />
+          </label>
+          <button id="boldButton" class="format-button" type="button" aria-pressed="false" title="加粗"><strong>B</strong></button>
+          <button id="underlineButton" class="format-button underline-button" type="button" aria-pressed="false" title="下划线">U</button>
+          <label class="color-control" title="文字颜色">
+            <span class="sr-only">文字颜色</span>
+            <input id="textColor" type="color" value="#f7f8f2" aria-label="文字颜色" />
+          </label>
+          <label class="field-control compact-field">
+            <span>行距</span>
+            <select id="lineHeight" aria-label="行距">
+              <option value="1.3">紧凑</option>
+              <option value="1.58" selected>标准</option>
+              <option value="1.8">宽松</option>
+              <option value="2.1">超宽</option>
+            </select>
+          </label>
+          <label class="field-control compact-field">
+            <span>字距</span>
+            <select id="letterSpacing" aria-label="字间距">
+              <option value="0">默认</option>
+              <option value="0.04">稍宽</option>
+              <option value="0.08">宽</option>
+              <option value="0.14">超宽</option>
+            </select>
+          </label>
+          <div class="alignment-group" aria-label="文字对齐">
+            <button class="format-button align-button is-active" type="button" data-align="left" aria-label="左对齐" aria-pressed="true" title="左对齐">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h11M4 14h16M4 18h9"/></svg>
+            </button>
+            <button class="format-button align-button" type="button" data-align="center" aria-label="居中对齐" aria-pressed="false" title="居中对齐">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M6.5 10h11M4 14h16M7.5 18h9"/></svg>
+            </button>
+            <button class="format-button align-button" type="button" data-align="right" aria-label="右对齐" aria-pressed="false" title="右对齐">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 10h11M4 14h16M11 18h9"/></svg>
+            </button>
+          </div>
+          <button id="markerButton" class="marker-button" type="button" title="在光标所在段落添加或取消标点">
+            <span class="marker-dot" aria-hidden="true"></span>
+            <span>打点</span>
+            <span id="markerCount" class="marker-count">0</span>
+          </button>
+        </div>
+
+        <label class="editor-shell" for="scriptInput">
+          <span class="sr-only">提词文本</span>
+          <textarea
+            id="scriptInput"
+            spellcheck="false"
+            placeholder="把你的台词粘贴到这里…"
+          ></textarea>
+          <div id="editorMirror" class="editor-mirror" aria-hidden="true"></div>
+          <div id="editorMarkerLayer" class="editor-marker-layer" aria-hidden="true"></div>
+          <span id="wordCount" class="word-count">0 字</span>
+        </label>
+
+        <button id="startButton" class="control-button primary-button" type="button" aria-label="开始播放">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.7v12.6a1 1 0 0 0 1.54.84l9.15-6.3a1 1 0 0 0 0-1.68L9.54 4.86A1 1 0 0 0 8 5.7Z"/></svg>
+          <span>开始提词</span>
+        </button>
+      </section>
+
+      <section id="playerView" class="view player-view is-hidden" aria-label="提词播放" aria-hidden="true">
+        <button id="backButton" class="round-button back-button" type="button" aria-label="返回编辑">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+        <div class="marker-hint" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd><span>标点跳转</span></div>
+
+        <div id="scrollViewport" class="scroll-viewport">
+          <article id="scriptDisplay" class="script-display"></article>
+        </div>
+
+        <aside class="speed-control" aria-label="滚动速度">
+          <span class="speed-label">速度</span>
+          <input id="speedSlider" type="range" min="0" max="100" step="1" value="35" aria-label="滚动速度，底部为暂停" />
+          <output id="speedOutput" for="speedSlider">35</output>
+        </aside>
+
+        <button id="playPauseButton" class="control-button player-button" type="button" aria-label="暂停">
+          <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zm7 0h3v14h-3z"/></svg>
+          <svg class="play-icon is-hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.7v12.6a1 1 0 0 0 1.54.84l9.15-6.3a1 1 0 0 0 0-1.68L9.54 4.86A1 1 0 0 0 8 5.7Z"/></svg>
+          <span id="playPauseLabel">暂停</span>
+        </button>
+
+        <div class="progress-track" aria-hidden="true"><span id="progressFill"></span></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

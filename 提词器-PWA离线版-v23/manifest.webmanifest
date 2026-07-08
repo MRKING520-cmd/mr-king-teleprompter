@@ -1,0 +1,19 @@
+{
+  "name": "金先生的提词板",
+  "short_name": "提词板",
+  "description": "支持自动滚动、段落打点和亮暗主题的离线提词器",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070908",
+  "theme_color": "#070908",
+  "icons": [
+    {
+      "src": "tree-avatar.jpg",
+      "sizes": "640x640",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
